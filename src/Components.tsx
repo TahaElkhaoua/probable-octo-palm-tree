@@ -41,7 +41,7 @@ export function Components(props: ComponentsProps) {
                 y={0}
                 height={window.innerHeight}
                 width={250}
-                fill={"#33364c"}
+                fill={"#f3f3f3"}
             />
             <Rect
                 ref={ref}
@@ -49,7 +49,7 @@ export function Components(props: ComponentsProps) {
                 onDragMove={dragMove}
                 onDragEnd={dragEnd}
                  {...pos}
-                 fill={'white'}
+                 fill={'#ffffff'}
                  height={60}
                  width={150}
             />
