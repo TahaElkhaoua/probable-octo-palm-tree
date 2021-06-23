@@ -43,7 +43,7 @@ export function AttributeV(props: AttributeProps) {
                 props.model.updateMethod(attribute, index)
             }
             document.querySelector('#root')?.removeChild(area)
-            ref.current!.show()
+            ref.current?.show()
         }
         area.addEventListener('focusout', event)
         area.addEventListener('keydown', function(key){
@@ -89,6 +89,7 @@ export function AttributeV(props: AttributeProps) {
                  {...(props.rectConf||{})}
                  />
                     <Text text={(typeof props.attribute === 'string' ) ? props.attribute : `${props.attribute.label}: ${props.attribute.type}`}
+                    ref={txtRef}
                     width={props.width}
                     height={props.height}
                     x={0}
@@ -99,7 +100,6 @@ export function AttributeV(props: AttributeProps) {
                     fill={"#69697f"}
                     fontFamily={"Fira Sans, Raleway"}
                     fontSize={11}
-                    ref={txtRef}
                     onDblClick={editText(txtRef, props.attribute, props.index, props.pos.x, props.pos.y, props.height, props.width)}
                     {...(props.textConf||{})}
                      />

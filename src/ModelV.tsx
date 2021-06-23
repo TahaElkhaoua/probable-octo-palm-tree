@@ -32,7 +32,7 @@ export function ModelV(props: ModelProps){
          
                   {props.model.relations.map((rel, i) => (
                           <LineV 
-                            points={rel.flattenPoints()}
+                            points={rel.flattenPoints(props.model.pos)}
                             key={`${i}-relation`}
                           />
                         ))

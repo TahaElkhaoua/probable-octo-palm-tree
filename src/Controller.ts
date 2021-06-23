@@ -34,11 +34,20 @@ export class Relation {
         public index: number
     ){}
 
-    flattenPoints(): number[]{
+    flattenPoints(currentPos: Coords): number[]{ 
+        this.checkModelPos(currentPos)
         return [
             this.ref.pos.x + this.ref.width,
          this.ref.pos.y + (this.ref.height / 2)
             ,...this.points.map(coord => [coord.x, coord.y]).flat()]
+    }
+
+    private checkModelPos(currentPos: Coords){
+        if(this.ref.pos.x < currentPos.x){
+            this.points[this.points.length - 1].x = currentPos.x  
+        }else {
+            this.points[this.points.length - 1].x = currentPos.x + this.ref.width
+        }
     }
 }
 

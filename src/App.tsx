@@ -51,6 +51,7 @@ function App() {
 
   const create = (comp: ComponentsTypes, pos: Coords) => {
     const m = new Model(`Model~#${controller.models.length}`, pos , cloneDeep(attributes)) 
+    if(controller.models.length > 0 && Math.random() > .75) m.addRelation(new Relation(controller.models[controller.models.length - 1], [], 1))
     switch(comp){
         case ComponentsTypes.Model : 
           updateController({
