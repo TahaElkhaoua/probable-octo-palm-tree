@@ -10,10 +10,8 @@ interface ModelProps {
     model: Model,
     contained: (pos: Coords) => Model | null | void
 }
-
-export function ModelV(props: ModelProps){
-    const ref = useRef<Konva.Group>(null)
-    const [drag, setDrag] = useState<boolean>(true)
+//create seperate Component to hold all attributes
+const RenderRect = (model: Model, contained: any, setDrag: any, attribute: IAttribute | string, index: number, width: number, height: number, pos: Coords, textConf: {} = {}, rectConf: {} = {}, dragConf: {} = {}) => {
 
     const editText = (ref: React.RefObject<Konva.Text>, attribute: IAttribute | string, index: number, x: number, y: number, height: number, width: number) => () => {
         ref.current!.hide()
@@ -23,7 +21,7 @@ export function ModelV(props: ModelProps){
         area.className = 'edit-text-area'
         area.style.position = 'absolute'
         area.style.left = x + 'px'
-        area.style.top = props.model.pos.y + y + 'px'
+        area.style.top = model.pos.y + y + 'px'
         area.style.height = height + 'px'
         area.style.width = width + 'px'
         area.focus()
@@ -31,10 +29,10 @@ export function ModelV(props: ModelProps){
         const event = function(){
             const updatedText = area.value;
             if(typeof attribute === 'string'){
-                props.model.setLabel(updatedText)
+                model.setLabel(updatedText)
             }else {
                 attribute.label = updatedText
-                props.model.updateMethod(attribute, index)
+                model.updateMethod(attribute, index)
             }
             document.querySelector('#root')?.removeChild(area)
             ref.current!.show()
@@ -44,62 +42,69 @@ export function ModelV(props: ModelProps){
             if(key.key === 'Enter') area.blur()
         })
     }
-    const RenderRect = (attribute: IAttribute | string, index: number, width: number, height: number, pos: Coords, textConf: {} = {}, rectConf: {} = {}, dragConf: {} = {}) => {
-        const txtRef = useRef<Konva.Text>(null)
-        const grpRef = useRef<Konva.Group>(null)
+ 
+ 
+    const txtRef = useRef<Konva.Text>(null)
+    const grpRef = useRef<Konva.Group>(null)
 
-        const handleDragEnd = (evt: any) => {
-            console.log(evt)
-            const swapModel = props.contained({x: (evt.evt.screenX + (props.model.width / 2) ), y:  evt.evt.screenY})
-            if(swapModel && swapModel !== props.model){
-                props.model.removeAttribute(index)
-                //swapModel.addAttribute(attribute as IAttribute)
-                console.log(props.model.attributes, swapModel.attributes)
-            }else {
-                grpRef.current?.setPosition({y: 0, x: 0})
-            }
-            setDrag(true)
+    const handleDragEnd = (evt: any) => {
+        const swapModel = contained({x: (evt.evt.screenX + (model.width / 2) ), y:  evt.evt.screenY})
+        if(swapModel && swapModel !== model){
+            model.removeAttribute(index)
+            swapModel.addAttribute(attribute as IAttribute)
+            console.log(model.attributes, swapModel.attributes)
+        }else {
+            grpRef.current?.setPosition({y: 0, x: 0})
         }
-        const dragStart = () => {
-            setDrag(false)
-        }
-
-            return (
-                <Group key={pos.y} 
-                width={width}
-                height={height}
-                ref={grpRef}
-                    draggable
-                    onDragStart={dragStart}
-                    onDragEnd={handleDragEnd}
-                    {...dragConf}
-                >
-                    <Rect 
-                     width={width}
-                     height={height}
-                     x={0}
-                     y={pos.y}
-                     {...rectConf}
-                     fill={"#ffffff"}
-                     />
-                        <Text text={(typeof attribute === 'string' ) ? attribute : `${attribute.label}: ${attribute.type}`}
-                        width={width}
-                        height={height}
-                        x={0}
-                        y={pos.y}
-                        padding={25}
-                        align={'left'}
-                        verticalAlign={'middle'}
-                        fill={"#69697f"}
-                        fontFamily={"Fira Sans, Raleway"}
-                        fontSize={11}
-                        {...textConf}
-                        ref={txtRef}
-                        onDblClick={editText(txtRef, attribute, index, pos.x, pos.y, height, width)}
-                         />
-                </Group>
-            )
+         setDrag(true)
     }
+    const dragStart = () => {
+         setDrag(false)
+    }
+
+        return (
+            <Group key={pos.y} 
+            width={width}
+            height={height}
+            ref={grpRef}
+                draggable
+                onDragStart={dragStart}
+                onDragEnd={handleDragEnd}
+                {...dragConf}
+            >
+                <Rect 
+                 width={width}
+                 height={height}
+                 x={0}
+                 y={pos.y}
+                 {...rectConf}
+                 fill={"#ffffff"}
+                 />
+                    <Text text={(typeof attribute === 'string' ) ? attribute : `${attribute.label}: ${attribute.type}`}
+                    width={width}
+                    height={height}
+                    x={0}
+                    y={pos.y}
+                    padding={25}
+                    align={'left'}
+                    verticalAlign={'middle'}
+                    fill={"#69697f"}
+                    fontFamily={"Fira Sans, Raleway"}
+                    fontSize={11}
+                    {...textConf}
+                    ref={txtRef}
+                    onDblClick={editText(txtRef, attribute, index, pos.x, pos.y, height, width)}
+                     />
+            </Group>
+        )
+}
+
+export function ModelV(props: ModelProps){
+    const ref = useRef<Konva.Group>(null)
+    const [drag, setDrag] = useState<boolean>(true)
+
+
+    
 
     const syncPos = (evt: any) => {
         if(!drag) return;
@@ -119,8 +124,8 @@ export function ModelV(props: ModelProps){
                         ))
                       }       
       
-            <Group draggable={drag}
-                onDragMove={syncPos}
+            <Group draggable={false}
+                //onDragMove={syncPos}
                 x={props.model.pos.x}
                 y={props.model.pos.y}
                 ref={ref}
@@ -132,7 +137,7 @@ export function ModelV(props: ModelProps){
                 x={0}
                 y={0}
                 />
-            {RenderRect( props.model.label.toUpperCase() , 0
+            {RenderRect( props.model, props.contained, setDrag, props.model.label.toUpperCase() , 0
                         , props.model.width, props.model.height, props.model.attributePos(0), {
                             align: 'center',
                             fontStyle: 'bold',
@@ -147,7 +152,7 @@ export function ModelV(props: ModelProps){
                         })}
             {
                 props.model.attributes.map((att, i) => 
-                RenderRect(
+                RenderRect(props.model, props.contained, setDrag,
                         att, i
                         , props.model.width, props.model.height, props.model.attributePos(i+1))
                     )
