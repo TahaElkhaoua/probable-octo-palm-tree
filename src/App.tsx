@@ -3,6 +3,7 @@ import { Coords, Model, Relation, Types, Components as ComponentsTypes } from '.
 import { Stage, Layer } from 'react-konva'
 import { ModelV } from './ModelV'
 import { Components } from './Components';
+import { cloneDeep } from 'lodash'
 
 import './App.css';
 
@@ -49,7 +50,7 @@ function App() {
 
 
   const create = (comp: ComponentsTypes, pos: Coords) => {
-    const m = new Model('New Model', pos , [...attributes]) 
+    const m = new Model(`Model~#${controller.models.length}`, pos , cloneDeep(attributes)) 
     switch(comp){
         case ComponentsTypes.Model : 
           updateController({

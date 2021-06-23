@@ -1,5 +1,5 @@
-import { updateFor } from 'typescript';
 import { v4 as uuid } from 'uuid'
+import { cloneDeep } from 'lodash'
 
 export enum Types {
     String='String',
@@ -71,11 +71,10 @@ export class Model {
     }
 
     public addAttribute(attribute: IAttribute): void {
-        this.attributes.push({...attribute})
+        this.attributes.push(cloneDeep(attribute))
     }
     public removeAttribute(index: number): void {
-        const tmp = [...this.attributes].splice(index, 1)
-        this.attributes = tmp
+        this.attributes.splice(index, 1)
     }
 
     public setLabel(label: string){
